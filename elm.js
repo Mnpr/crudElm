@@ -4392,183 +4392,13 @@ var elm$core$Set$toList = function (_n0) {
 };
 var author$project$Main$initState = {itemsList: _List_Nil, lid: 0, listItem: ''};
 var elm$core$Basics$False = {$: 'False'};
-var author$project$Main$newTodo = F2(
-	function (todoInfo, id) {
-		return {edit: false, id: id, info: todoInfo, isComplete: false};
-	});
-var elm$core$Basics$add = _Basics_add;
-var elm$core$Basics$append = _Utils_append;
-var elm$core$Basics$eq = _Utils_equal;
-var elm$core$Basics$neq = _Utils_notEqual;
-var elm$core$Basics$gt = _Utils_gt;
-var elm$core$List$foldl = F3(
-	function (func, acc, list) {
-		foldl:
-		while (true) {
-			if (!list.b) {
-				return acc;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				var $temp$func = func,
-					$temp$acc = A2(func, x, acc),
-					$temp$list = xs;
-				func = $temp$func;
-				acc = $temp$acc;
-				list = $temp$list;
-				continue foldl;
-			}
-		}
-	});
-var elm$core$List$reverse = function (list) {
-	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
-};
-var elm$core$List$foldrHelper = F4(
-	function (fn, acc, ctr, ls) {
-		if (!ls.b) {
-			return acc;
-		} else {
-			var a = ls.a;
-			var r1 = ls.b;
-			if (!r1.b) {
-				return A2(fn, a, acc);
-			} else {
-				var b = r1.a;
-				var r2 = r1.b;
-				if (!r2.b) {
-					return A2(
-						fn,
-						a,
-						A2(fn, b, acc));
-				} else {
-					var c = r2.a;
-					var r3 = r2.b;
-					if (!r3.b) {
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(fn, c, acc)));
-					} else {
-						var d = r3.a;
-						var r4 = r3.b;
-						var res = (ctr > 500) ? A3(
-							elm$core$List$foldl,
-							fn,
-							acc,
-							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(
-									fn,
-									c,
-									A2(fn, d, res))));
-					}
-				}
-			}
-		}
-	});
-var elm$core$List$foldr = F3(
-	function (fn, acc, ls) {
-		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
-	});
-var elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
-	});
-var author$project$Main$update = F2(
-	function (msg, todo) {
-		switch (msg.$) {
-			case 'NoOp':
-				return todo;
-			case 'Create':
-				return _Utils_update(
-					todo,
-					{
-						itemsList: _Utils_ap(
-							todo.itemsList,
-							_List_fromArray(
-								[
-									A2(author$project$Main$newTodo, todo.listItem, todo.lid)
-								])),
-						lid: todo.lid + 1,
-						listItem: ''
-					});
-			case 'UpdateListItem':
-				var newItem = msg.a;
-				return _Utils_update(
-					todo,
-					{listItem: newItem});
-			case 'UpdateItemsList':
-				var id = msg.a;
-				var task = msg.b;
-				var updateListItem = function (t) {
-					return _Utils_eq(t.id, id) ? _Utils_update(
-						t,
-						{info: task}) : t;
-				};
-				return _Utils_update(
-					todo,
-					{
-						itemsList: A2(elm$core$List$map, updateListItem, todo.itemsList)
-					});
-			case 'Check':
-				var id = msg.a;
-				var checkItem = msg.b;
-				var completeItem = function (t) {
-					return _Utils_eq(t.id, id) ? _Utils_update(
-						t,
-						{isComplete: checkItem}) : t;
-				};
-				return _Utils_update(
-					todo,
-					{
-						itemsList: A2(elm$core$List$map, completeItem, todo.itemsList)
-					});
-			default:
-				var id = msg.a;
-				return _Utils_update(
-					todo,
-					{
-						itemsList: A2(
-							elm$core$List$filter,
-							function (x) {
-								return !_Utils_eq(x.id, id);
-							},
-							todo.itemsList)
-					});
-		}
-	});
-var author$project$Main$Create = {$: 'Create'};
-var author$project$Main$UpdateListItem = function (a) {
-	return {$: 'UpdateListItem', a: a};
+var elm$core$Basics$True = {$: 'True'};
+var elm$core$Result$isOk = function (result) {
+	if (result.$ === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
 };
 var elm$core$Array$branchFactor = 32;
 var elm$core$Array$Array_elm_builtin = F4(
@@ -4593,6 +4423,28 @@ var elm$core$Array$SubTree = function (a) {
 	return {$: 'SubTree', a: a};
 };
 var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
+var elm$core$List$foldl = F3(
+	function (func, acc, list) {
+		foldl:
+		while (true) {
+			if (!list.b) {
+				return acc;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				var $temp$func = func,
+					$temp$acc = A2(func, x, acc),
+					$temp$list = xs;
+				func = $temp$func;
+				acc = $temp$acc;
+				list = $temp$list;
+				continue foldl;
+			}
+		}
+	});
+var elm$core$List$reverse = function (list) {
+	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
+};
 var elm$core$Array$compressNodes = F2(
 	function (nodes, acc) {
 		compressNodes:
@@ -4619,6 +4471,7 @@ var elm$core$Basics$apR = F2(
 	function (x, f) {
 		return f(x);
 	});
+var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Tuple$first = function (_n0) {
 	var x = _n0.a;
 	return x;
@@ -4639,11 +4492,13 @@ var elm$core$Array$treeFromBuilder = F2(
 			}
 		}
 	});
+var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$apL = F2(
 	function (f, x) {
 		return f(x);
 	});
 var elm$core$Basics$floor = _Basics_floor;
+var elm$core$Basics$gt = _Utils_gt;
 var elm$core$Basics$max = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) > 0) ? x : y;
@@ -4726,14 +4581,6 @@ var elm$core$Result$Err = function (a) {
 var elm$core$Result$Ok = function (a) {
 	return {$: 'Ok', a: a};
 };
-var elm$core$Basics$True = {$: 'True'};
-var elm$core$Result$isOk = function (result) {
-	if (result.$ === 'Ok') {
-		return true;
-	} else {
-		return false;
-	}
-};
 var elm$json$Json$Decode$Failure = F2(
 	function (a, b) {
 		return {$: 'Failure', a: a, b: b};
@@ -4750,6 +4597,7 @@ var elm$json$Json$Decode$OneOf = function (a) {
 	return {$: 'OneOf', a: a};
 };
 var elm$core$Basics$and = _Basics_and;
+var elm$core$Basics$append = _Utils_append;
 var elm$core$Basics$or = _Basics_or;
 var elm$core$Char$toCode = _Char_toCode;
 var elm$core$Char$isLower = function (_char) {
@@ -4938,6 +4786,249 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 			}
 		}
 	});
+var elm$core$Platform$Cmd$batch = _Platform_batch;
+var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
+var author$project$Main$init = function (_n0) {
+	return _Utils_Tuple2(author$project$Main$initState, elm$core$Platform$Cmd$none);
+};
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$json$Json$Encode$int = _Json_wrap;
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var elm$json$Json$Encode$string = _Json_wrap;
+var author$project$Main$sendTodo = _Platform_outgoingPort(
+	'sendTodo',
+	function ($) {
+		return elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'itemsList',
+					elm$json$Json$Encode$list(
+						function ($) {
+							return elm$json$Json$Encode$object(
+								_List_fromArray(
+									[
+										_Utils_Tuple2(
+										'id',
+										elm$json$Json$Encode$int($.id)),
+										_Utils_Tuple2(
+										'info',
+										elm$json$Json$Encode$string($.info)),
+										_Utils_Tuple2(
+										'isComplete',
+										elm$json$Json$Encode$bool($.isComplete))
+									]));
+						})($.itemsList)),
+					_Utils_Tuple2(
+					'lid',
+					elm$json$Json$Encode$int($.lid)),
+					_Utils_Tuple2(
+					'listItem',
+					elm$json$Json$Encode$string($.listItem))
+				]));
+	});
+var author$project$Main$newTodo = F2(
+	function (todoInfo, id) {
+		return {id: id, info: todoInfo, isComplete: false};
+	});
+var elm$core$Basics$neq = _Utils_notEqual;
+var elm$core$List$foldrHelper = F4(
+	function (fn, acc, ctr, ls) {
+		if (!ls.b) {
+			return acc;
+		} else {
+			var a = ls.a;
+			var r1 = ls.b;
+			if (!r1.b) {
+				return A2(fn, a, acc);
+			} else {
+				var b = r1.a;
+				var r2 = r1.b;
+				if (!r2.b) {
+					return A2(
+						fn,
+						a,
+						A2(fn, b, acc));
+				} else {
+					var c = r2.a;
+					var r3 = r2.b;
+					if (!r3.b) {
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(fn, c, acc)));
+					} else {
+						var d = r3.a;
+						var r4 = r3.b;
+						var res = (ctr > 500) ? A3(
+							elm$core$List$foldl,
+							fn,
+							acc,
+							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(
+									fn,
+									c,
+									A2(fn, d, res))));
+					}
+				}
+			}
+		}
+	});
+var elm$core$List$foldr = F3(
+	function (fn, acc, ls) {
+		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
+	});
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
+	});
+var author$project$Main$update = F2(
+	function (msg, todo) {
+		switch (msg.$) {
+			case 'NoOp':
+				return _Utils_Tuple2(todo, elm$core$Platform$Cmd$none);
+			case 'Create':
+				return _Utils_Tuple2(
+					_Utils_update(
+						todo,
+						{
+							itemsList: _Utils_ap(
+								todo.itemsList,
+								_List_fromArray(
+									[
+										A2(author$project$Main$newTodo, todo.listItem, todo.lid)
+									])),
+							lid: todo.lid + 1,
+							listItem: ''
+						}),
+					elm$core$Platform$Cmd$none);
+			case 'UpdateListItem':
+				var newItem = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						todo,
+						{listItem: newItem}),
+					elm$core$Platform$Cmd$none);
+			case 'UpdateItemsList':
+				var id = msg.a;
+				var task = msg.b;
+				var updateListItem = function (t) {
+					return _Utils_eq(t.id, id) ? _Utils_update(
+						t,
+						{info: task}) : t;
+				};
+				return _Utils_Tuple2(
+					_Utils_update(
+						todo,
+						{
+							itemsList: A2(elm$core$List$map, updateListItem, todo.itemsList)
+						}),
+					elm$core$Platform$Cmd$none);
+			case 'Check':
+				var id = msg.a;
+				var checkItem = msg.b;
+				var completeItem = function (t) {
+					return _Utils_eq(t.id, id) ? _Utils_update(
+						t,
+						{isComplete: checkItem}) : t;
+				};
+				return _Utils_Tuple2(
+					_Utils_update(
+						todo,
+						{
+							itemsList: A2(elm$core$List$map, completeItem, todo.itemsList)
+						}),
+					elm$core$Platform$Cmd$none);
+			default:
+				var id = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						todo,
+						{
+							itemsList: A2(
+								elm$core$List$filter,
+								function (x) {
+									return !_Utils_eq(x.id, id);
+								},
+								todo.itemsList)
+						}),
+					elm$core$Platform$Cmd$none);
+		}
+	});
+var author$project$Main$storeTodos = F2(
+	function (msg, model) {
+		var _n0 = A2(author$project$Main$update, msg, model);
+		var newModel = _n0.a;
+		var cmds = _n0.b;
+		return _Utils_Tuple2(
+			newModel,
+			elm$core$Platform$Cmd$batch(
+				_List_fromArray(
+					[
+						author$project$Main$sendTodo(newModel),
+						cmds
+					])));
+	});
+var elm$core$Platform$Sub$batch = _Platform_batch;
+var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
+var author$project$Main$subs = function (model) {
+	return elm$core$Platform$Sub$none;
+};
+var author$project$Main$Create = {$: 'Create'};
+var author$project$Main$UpdateListItem = function (a) {
+	return {$: 'UpdateListItem', a: a};
+};
 var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$int = _Json_decodeInt;
 var elm$html$Html$Events$keyCode = A2(elm$json$Json$Decode$field, 'keyCode', elm$json$Json$Decode$int);
@@ -4983,7 +5074,6 @@ var author$project$Main$onEnter = function (msg) {
 };
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$input = _VirtualDom_node('input');
-var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -5063,7 +5153,6 @@ var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$li = _VirtualDom_node('li');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
 		return A2(
@@ -5187,10 +5276,6 @@ var author$project$Main$view = function (todo) {
 					]))
 			]));
 };
-var elm$core$Platform$Cmd$batch = _Platform_batch;
-var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var elm$core$Platform$Sub$batch = _Platform_batch;
-var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
 };
@@ -5417,25 +5502,21 @@ var elm$url$Url$fromString = function (str) {
 		elm$url$Url$Https,
 		A2(elm$core$String$dropLeft, 8, str)) : elm$core$Maybe$Nothing);
 };
-var elm$browser$Browser$sandbox = function (impl) {
-	return _Browser_element(
-		{
-			init: function (_n0) {
-				return _Utils_Tuple2(impl.init, elm$core$Platform$Cmd$none);
-			},
-			subscriptions: function (_n1) {
-				return elm$core$Platform$Sub$none;
-			},
-			update: F2(
-				function (msg, model) {
-					return _Utils_Tuple2(
-						A2(impl.update, msg, model),
-						elm$core$Platform$Cmd$none);
-				}),
-			view: impl.view
-		});
-};
-var author$project$Main$main = elm$browser$Browser$sandbox(
-	{init: author$project$Main$initState, update: author$project$Main$update, view: author$project$Main$view});
+var elm$browser$Browser$document = _Browser_document;
+var author$project$Main$main = elm$browser$Browser$document(
+	{
+		init: author$project$Main$init,
+		subscriptions: author$project$Main$subs,
+		update: author$project$Main$storeTodos,
+		view: function (todo) {
+			return {
+				body: _List_fromArray(
+					[
+						author$project$Main$view(todo)
+					]),
+				title: 'Todo-Elm'
+			};
+		}
+	});
 _Platform_export({'Main':{'init':author$project$Main$main(
 	elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));

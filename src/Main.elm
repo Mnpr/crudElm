@@ -1,11 +1,12 @@
-module Main exposing(main)
+port module Main exposing (..)
 
 import Browser
 import Html exposing (..)
 import Html.Events exposing(..)
 import Html.Attributes exposing (..)
 import Html.Lazy exposing (lazy)
-import Json.Decode as Json
+-- import Json.Encode as E
+import Json.Decode as D
 
 -------- Application States -------
 
@@ -20,37 +21,65 @@ type alias ListItem =
     {
         id : Int
         , isComplete : Bool
-        , edit : Bool
         , info : String
     }
 
 --------- Initial States ---------
 
 initState : Todo
-initState = 
+initState  = 
     {
         lid = 0
         , listItem = ""
         , itemsList = []  
     }
 
--- init : Maybe Todo -> Todo 
--- init maybeTodo =
---     Maybe.withDefault initState maybeTodo
+init : () -> (Todo, Cmd Msg)
+init _ =
+  (initState, Cmd.none)
+
+
+storeTodos : Msg -> Todo -> ( Todo, Cmd Msg )
+storeTodos msg model =
+    let
+        ( newModel, cmds ) =
+            update msg model
+    in
+        ( newModel
+        , Cmd.batch [ sendTodo newModel, cmds ]
+        )
+
+---------- Json E/D 
+-- todoEncoder : ListItem -> E.Value
+-- todoEncoder todoList =
+--     E.object
+--         [ ("id", E.int todoList.id) 
+--         , ("check", E.bool todoList.isComplete) 
+--         , ("info", E.string todoList.info )
+--         ]
+
+-- userDecoder : Decoder ListItem
+-- userDecoder =
+--     decode Listitem
+--         |> required "id" int
+--         |> required "check" bool
+--         |> required "info" string
+
+-- nullEncoder : (a -> JsonE.Value) -> Maybe a -> JsonE.Value
+-- nullEncoder encoder val =
+--     case val of
+--         Just v ->
+--             encoder v
+
+--         Nothing ->
+--             JsonE.null
 
 -------------- Local Storage
 
--- port setStorage : Todo -> Cmd msg
+port sendTodo : Todo -> Cmd msg
 
--- updateWithStorage : Msg -> Todo -> ( Todo, Cmd Msg )
--- updateWithStorage msg todoModel =
---     let
---         ( newModel, cmds ) =
---             update msg todoModel
---     in
---         ( newModel
---         , Cmd.batch [ setStorage newModel, cmds ]
---         )
+-- port retrieveTodo : (E.Value -> msg) -> Sub msg
+
 
 ----------- Update -----------
 
@@ -62,27 +91,22 @@ type Msg =
         | Check Int Bool
         | Remove Int
 
-update : Msg -> Todo -> Todo
+
+
+update : Msg -> Todo -> (Todo, Cmd Msg)
 update msg todo =
     case msg of
         NoOp ->
-            todo
-            -- (todo, Cmd.none)
+            (todo, Cmd.none)
         Create ->
-            {   todo 
+            ({   todo 
                 | lid = todo.lid + 1
                 , listItem = ""
                 , itemsList = todo.itemsList ++ [ newTodo todo.listItem todo.lid ] 
-            }
-            -- ({   todo 
-            --     | lid = todo.lid + 1
-            --     , listItem = ""
-            --     , itemsList = todo.itemsList ++ [ newTodo todo.listItem todo.lid ] 
-            -- }, Cmd.none)
+            }, Cmd.none)
         -----------------------------------------
         UpdateListItem  newItem ->
-                    {   todo | listItem = newItem }
-            -- ({   todo | listItem = newItem }, Cmd.none)
+            ({   todo | listItem = newItem }, Cmd.none)
             
         UpdateItemsList id task ->
             let
@@ -92,8 +116,7 @@ update msg todo =
                     else
                         t
             in
-                { todo | itemsList = List.map updateListItem todo.itemsList }
-                -- ({ todo | itemsList = List.map updateListItem todo.itemsList }, Cmd.none)
+                ({ todo | itemsList = List.map updateListItem todo.itemsList }, Cmd.none)
         ------------------------------------------
         Check id checkItem ->
                 let
@@ -103,23 +126,18 @@ update msg todo =
                         else 
                             t
                 in 
-                    { todo | itemsList = List.map completeItem todo.itemsList }
-                    -- ({ todo | itemsList = List.map completeItem todo.itemsList }, Cmd.none)
+                    ({ todo | itemsList = List.map completeItem todo.itemsList }, Cmd.none)
         -------------------------------------------    
         Remove id ->
-            {
+            ({
                 todo | itemsList = List.filter (\x -> x.id /= id ) todo.itemsList  
-            }
-            -- ({
-            --     todo | itemsList = List.filter (\x -> x.id /= id ) todo.itemsList  
-            -- }, Cmd.none)
+            }, Cmd.none)
 
 newTodo : String -> Int -> ListItem
 newTodo  todoInfo id =
     {
         id = id
         , isComplete = False
-        , edit = False
         , info = todoInfo
     }
 
@@ -156,11 +174,11 @@ onEnter msg =
     let
         isEnter code =
             if code == 13 then
-                Json.succeed msg
+                D.succeed msg
             else
-                Json.fail "not ENTER"
+                D.fail "not ENTER"
     in
-        on "keydown" (Json.andThen isEnter keyCode)
+        on "keydown" (D.andThen isEnter keyCode)
 
 --------- View Individual listitems
 
@@ -193,12 +211,16 @@ viewItemsList todoList=
 
 
 -----------------------------------------------------------------------------
+
+subs : Todo -> Sub Msg
+subs model =
+    Sub.none
+    
 -- main : Program (Maybe Todo) Todo Msg
 main =
-    Browser.sandbox        
-        { init = initState
-        , view = view
-        -- , view = \todo -> { title = "Todo", body = [ view todo ] } 
-        , update = update
-        -- , subscriptions = \_ -> Sub.none
+    Browser.document
+        { init = init
+        , view = \todo -> { title = "Todo-Elm", body = [view todo] }
+        , update = storeTodos
+        , subscriptions = subs
         }
