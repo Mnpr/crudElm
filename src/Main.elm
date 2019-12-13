@@ -34,9 +34,9 @@ initState  =
         , itemsList = []  
     }
 
-init : () -> (Todo, Cmd Msg)
-init _ =
-  (initState, Cmd.none)
+init : Maybe Todo -> (Todo, Cmd Msg)
+init maybetodo =
+  (Maybe.withDefault initState maybetodo, Cmd.none)
 
 
 storeTodos : Msg -> Todo -> ( Todo, Cmd Msg )
@@ -77,7 +77,6 @@ storeTodos msg model =
 -------------- Local Storage
 
 port sendTodo : Todo -> Cmd msg
-
 -- port retrieveTodo : (E.Value -> msg) -> Sub msg
 
 
@@ -90,8 +89,6 @@ type Msg =
         | UpdateItemsList Int String
         | Check Int Bool
         | Remove Int
-
-
 
 update : Msg -> Todo -> (Todo, Cmd Msg)
 update msg todo =
@@ -209,12 +206,7 @@ viewItemsList todoList=
         <| List.map viewlistItem todoList
 
 
-
------------------------------------------------------------------------------
-
-subs : Todo -> Sub Msg
-subs model =
-    Sub.none
+----------------------------------- Main ----------------------------------------
     
 -- main : Program (Maybe Todo) Todo Msg
 main =
@@ -224,3 +216,7 @@ main =
         , update = storeTodos
         , subscriptions = subs
         }
+
+subs : Todo -> Sub Msg
+subs model =
+    Sub.none
