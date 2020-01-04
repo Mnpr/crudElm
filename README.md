@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Simple CRUD Elm-App
 
 * * *
