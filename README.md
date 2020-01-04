@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-# Simple CRUD Elm-App
-
 * * *
+# Simple CRUD Elm-App
 
 ### Simple todo app written in Elm : 
 

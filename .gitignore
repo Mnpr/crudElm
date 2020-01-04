@@ -4,3 +4,5 @@ elm-stuff
 repl-temp-*
 #node js file
 node_modules
+#compiled elm file
+elm.js
