@@ -49,36 +49,9 @@ storeTodos msg model =
         , Cmd.batch [ sendTodo newModel, cmds ]
         )
 
----------- Json E/D 
--- todoEncoder : ListItem -> E.Value
--- todoEncoder todoList =
---     E.object
---         [ ("id", E.int todoList.id) 
---         , ("check", E.bool todoList.isComplete) 
---         , ("info", E.string todoList.info )
---         ]
-
--- userDecoder : Decoder ListItem
--- userDecoder =
---     decode Listitem
---         |> required "id" int
---         |> required "check" bool
---         |> required "info" string
-
--- nullEncoder : (a -> JsonE.Value) -> Maybe a -> JsonE.Value
--- nullEncoder encoder val =
---     case val of
---         Just v ->
---             encoder v
-
---         Nothing ->
---             JsonE.null
-
 -------------- Local Storage
 
 port sendTodo : Todo -> Cmd msg
--- port retrieveTodo : (E.Value -> msg) -> Sub msg
-
 
 ----------- Update -----------
 
